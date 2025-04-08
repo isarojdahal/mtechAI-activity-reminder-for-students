@@ -5,11 +5,113 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Activity Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
   </head>
-  <body class="bg-gray-100 min-h-screen p-8">
-    <div class="max-w-2xl mx-auto">
-      <h1 class="text-3xl font-bold text-gray-800 mb-6">Activity Tracker</h1>
-      <div id="activity-list" class="space-y-4"></div>
+  <body class="bg-gray-50 min-h-screen">
+    <div class="max-w-4xl mx-auto p-6">
+      <!-- Header Section -->
+      <header class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-800">Activity Tracker</h1>
+            <p class="text-gray-600 mt-1">
+              Keep track of your assignments and deadlines
+            </p>
+          </div>
+          <div class="flex gap-3">
+            <button
+              id="clear-data"
+              class="px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors flex items-center gap-2"
+            >
+              <i class="fas fa-trash-alt"></i>
+              Clear Data
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Stats Section -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white p-4 rounded-lg shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="bg-blue-100 p-3 rounded-full">
+              <i class="fas fa-tasks text-blue-600"></i>
+            </div>
+            <div>
+              <p class="text-sm text-gray-600">Total Activities</p>
+              <h3
+                id="total-activities"
+                class="text-xl font-semibold text-gray-800"
+              >
+                0
+              </h3>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="bg-green-100 p-3 rounded-full">
+              <i class="fas fa-check text-green-600"></i>
+            </div>
+            <div>
+              <p class="text-sm text-gray-600">Completed</p>
+              <h3
+                id="completed-activities"
+                class="text-xl font-semibold text-gray-800"
+              >
+                0
+              </h3>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="bg-orange-100 p-3 rounded-full">
+              <i class="fas fa-clock text-orange-600"></i>
+            </div>
+            <div>
+              <p class="text-sm text-gray-600">Upcoming</p>
+              <h3
+                id="upcoming-activities"
+                class="text-xl font-semibold text-gray-800"
+              >
+                0
+              </h3>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity List -->
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-semibold text-gray-800">Your Activities</h2>
+          <div class="flex gap-2">
+            <button
+              id="filter-all"
+              class="px-3 py-1 rounded-full bg-blue-100 text-blue-600 text-sm"
+            >
+              All
+            </button>
+            <button
+              id="filter-active"
+              class="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-sm"
+            >
+              Active
+            </button>
+            <button
+              id="filter-completed"
+              class="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-sm"
+            >
+              Completed
+            </button>
+          </div>
+        </div>
+        <div id="activity-list" class="space-y-3"></div>
+      </div>
     </div>
     <script src="script.js"></script>
   </body>

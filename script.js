@@ -39,6 +39,38 @@ const getStatusIcon = (days) => {
   return "fa-calendar-check";
 };
 
+// Get activity type icon
+const getActivityTypeIcon = (type) => {
+  switch (type) {
+    case "ASSIGNMENT":
+      return "fa-book";
+    case "PROJECT":
+      return "fa-project-diagram";
+    case "EXAM":
+      return "fa-file-alt";
+    case "QUIZ":
+      return "fa-question-circle";
+    default:
+      return "fa-tasks";
+  }
+};
+
+// Get activity type color
+const getActivityTypeColor = (type) => {
+  switch (type) {
+    case "ASSIGNMENT":
+      return "text-blue-600";
+    case "PROJECT":
+      return "text-purple-600";
+    case "EXAM":
+      return "text-red-600";
+    case "QUIZ":
+      return "text-yellow-600";
+    default:
+      return "text-gray-600";
+  }
+};
+
 // Save activitys to localStorage
 const saveActivities = () => {
   localStorage.setItem("activities", JSON.stringify(activitys));
@@ -68,6 +100,8 @@ const toggleCompletion = (id) => {
 
 // Filter activities
 let currentFilter = "all";
+let currentTypeFilter = "all";
+
 const setFilter = (filter) => {
   currentFilter = filter;
   document.querySelectorAll('[id^="filter-"]').forEach((btn) => {
@@ -83,16 +117,40 @@ const setFilter = (filter) => {
   loadAssignments();
 };
 
+const setTypeFilter = (type) => {
+  currentTypeFilter = type;
+  document.querySelectorAll('[id^="type-"]').forEach((btn) => {
+    btn.classList.remove("bg-blue-100", "text-blue-600");
+    btn.classList.add("bg-gray-100", "text-gray-600");
+  });
+  document
+    .getElementById(`type-${type}`)
+    .classList.remove("bg-gray-100", "text-gray-600");
+  document
+    .getElementById(`type-${type}`)
+    .classList.add("bg-blue-100", "text-blue-600");
+  loadAssignments();
+};
+
 const loadAssignments = () => {
   const activityList = document.getElementById("activity-list");
   activityList.innerHTML = "";
 
-  // Filter activities based on current filter
+  // Filter activities based on current filter and type filter
   let filteredActivities = [...activitys];
+
+  // Apply completion status filter
   if (currentFilter === "active") {
-    filteredActivities = activitys.filter((a) => !a.completed);
+    filteredActivities = filteredActivities.filter((a) => !a.completed);
   } else if (currentFilter === "completed") {
-    filteredActivities = activitys.filter((a) => a.completed);
+    filteredActivities = filteredActivities.filter((a) => a.completed);
+  }
+
+  // Apply activity type filter
+  if (currentTypeFilter !== "all") {
+    filteredActivities = filteredActivities.filter(
+      (a) => a.activityType.toLowerCase() === currentTypeFilter.toUpperCase()
+    );
   }
 
   // Sort activities
@@ -109,6 +167,8 @@ const loadAssignments = () => {
     const remainingDays = getRemainingDays(activity.due_date);
     const statusColor = getStatusColor(remainingDays);
     const statusIcon = getStatusIcon(remainingDays);
+    const activityTypeIcon = getActivityTypeIcon(activity.activityType);
+    const activityTypeColor = getActivityTypeColor(activity.activityType);
 
     const activityItem = document.createElement("div");
     activityItem.classList.add(
@@ -149,9 +209,30 @@ const loadAssignments = () => {
     const infoDiv = document.createElement("div");
     infoDiv.classList.add("flex-grow");
 
+    const titleRow = document.createElement("div");
+    titleRow.classList.add("flex", "items-center", "gap-2");
+
+    const activityTypeBadge = document.createElement("span");
+    activityTypeBadge.classList.add(
+      "inline-flex",
+      "items-center",
+      "gap-1",
+      "px-2",
+      "py-1",
+      "rounded-full",
+      "text-xs",
+      "font-medium",
+      "bg-gray-100",
+      activityTypeColor
+    );
+    activityTypeBadge.innerHTML = `<i class="fas ${activityTypeIcon}"></i> ${activity.activityType}`;
+
     const title = document.createElement("h3");
     title.classList.add("text-lg", "font-semibold", "text-gray-800");
     title.textContent = activity.name;
+
+    titleRow.appendChild(activityTypeBadge);
+    titleRow.appendChild(title);
 
     const dueDateContainer = document.createElement("div");
     dueDateContainer.classList.add("flex", "gap-4", "items-center", "mt-1");
@@ -184,7 +265,7 @@ const loadAssignments = () => {
     dueDateContainer.appendChild(dueDate);
     dueDateContainer.appendChild(remainingDaysElement);
 
-    infoDiv.appendChild(title);
+    infoDiv.appendChild(titleRow);
     infoDiv.appendChild(dueDateContainer);
 
     contentDiv.appendChild(checkbox);
@@ -196,6 +277,7 @@ const loadAssignments = () => {
       title.classList.add("line-through", "text-gray-500");
       dueDate.classList.add("text-gray-400");
       remainingDaysElement.classList.add("text-gray-400");
+      activityTypeBadge.classList.add("opacity-50");
     }
 
     activityList.appendChild(activityItem);
@@ -215,8 +297,26 @@ document.addEventListener("DOMContentLoaded", () => {
     .getElementById("filter-completed")
     .addEventListener("click", () => setFilter("completed"));
 
-  // Set initial filter
+  // Set up type filter buttons
+  document
+    .getElementById("type-all")
+    .addEventListener("click", () => setTypeFilter("all"));
+  document
+    .getElementById("type-assignment")
+    .addEventListener("click", () => setTypeFilter("assignment"));
+  document
+    .getElementById("type-project")
+    .addEventListener("click", () => setTypeFilter("project"));
+  document
+    .getElementById("type-exam")
+    .addEventListener("click", () => setTypeFilter("exam"));
+  document
+    .getElementById("type-quiz")
+    .addEventListener("click", () => setTypeFilter("quiz"));
+
+  // Set initial filters
   setFilter("all");
+  setTypeFilter("all");
 
   // Load initial data
   loadAssignments();

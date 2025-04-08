@@ -1,15 +1,17 @@
-// Load assignments from localStorage or use default if none exist
-let assignments = JSON.parse(localStorage.getItem("assignments")) || [
+// Load activitys from localStorage or use default if none exist
+let activitys = JSON.parse(localStorage.getItem("activities")) || [
   {
     id: "1",
     name: "AI 3rd Assignment (Matplotlib)",
     due_date: "2025-04-15",
+    activityType: "ASSIGNMENT",
     completed: false,
   },
   {
     id: "2",
-    name: "Korean prof. Project assignment",
+    name: "Korean prof. Project ",
     due_date: "2025-06-15",
+    activityType: "ASSIGNMENT",
     completed: false,
   },
 ];
@@ -30,36 +32,32 @@ const getStatusColor = (days) => {
   return "text-green-600";
 };
 
-// Save assignments to localStorage
-const saveAssignments = () => {
-  localStorage.setItem("assignments", JSON.stringify(assignments));
+// Save activitys to localStorage
+const saveActivities = () => {
+  localStorage.setItem("activities", JSON.stringify(activities));
 };
 
 // Toggle completion status
 const toggleCompletion = (id) => {
-  const assignment = assignments.find((a) => a.id === id);
-  console.log("assignment", assignment);
-  if (assignment) {
-    assignment.completed = !assignment.completed;
-    saveAssignments();
+  const activity = activitys.find((a) => a.id === id);
+  if (activity) {
+    activity.completed = !activity.completed;
+    saveActivities();
 
-    // Find the assignment item in the DOM
-    const assignmentItem = document.querySelector(`[data-id="${id}"]`);
-    if (assignmentItem) {
-      const title = assignmentItem.querySelector("h3");
-      const dueDate = assignmentItem.querySelector(".text-gray-600");
-      const remainingDays = assignmentItem.querySelector(
-        ".text-sm.font-medium"
-      );
+    // Find the activity item in the DOM
+    const activityItem = document.querySelector(`[data-id="${id}"]`);
+    if (activityItem) {
+      const title = activityItem.querySelector("h3");
+      const dueDate = activityItem.querySelector(".text-gray-600");
+      const remainingDays = activityItem.querySelector(".text-sm.font-medium");
 
-      console.log("assignment", assignment);
-      if (assignment.completed) {
-        assignmentItem.classList.add("bg-green-50");
+      if (activity.completed) {
+        activityItem.classList.add("bg-green-50");
         title.classList.add("line-through", "text-gray-500");
         dueDate.classList.add("text-gray-400");
         remainingDays.classList.add("text-gray-400");
       } else {
-        assignmentItem.classList.remove("bg-green-50");
+        activityItem.classList.remove("bg-green-50");
         title.classList.remove("line-through", "text-gray-500");
         dueDate.classList.remove("text-gray-400");
         remainingDays.classList.remove("text-gray-400");
@@ -67,15 +65,15 @@ const toggleCompletion = (id) => {
     }
 
     // Re-sort the list without reloading
-    const assignmentList = document.getElementById("assignment-list");
-    const items = Array.from(assignmentList.children);
+    const activityList = document.getElementById("activity-list");
+    const items = Array.from(activityList.children);
 
     // Sort the DOM elements based on the same criteria
     items.sort((a, b) => {
       const aId = a.dataset.id;
       const bId = b.dataset.id;
-      const aAssignment = assignments.find((ass) => ass.id === aId);
-      const bAssignment = assignments.find((ass) => ass.id === bId);
+      const aAssignment = activitys.find((ass) => ass.id === aId);
+      const bAssignment = activitys.find((ass) => ass.id === bId);
 
       if (aAssignment.completed === bAssignment.completed) {
         const daysA = getRemainingDays(aAssignment.due_date);
@@ -86,16 +84,16 @@ const toggleCompletion = (id) => {
     });
 
     // Re-append the sorted items
-    items.forEach((item) => assignmentList.appendChild(item));
+    items.forEach((item) => activityList.appendChild(item));
   }
 };
 
 const loadAssignments = () => {
-  const assignmentList = document.getElementById("assignment-list");
-  assignmentList.innerHTML = "";
+  const activityList = document.getElementById("activity-list");
+  activityList.innerHTML = "";
 
-  // Sort assignments by remaining days (fewer days first)
-  const sortedAssignments = [...assignments].sort((a, b) => {
+  // Sort activitys by remaining days (fewer days first)
+  const sortedAssignments = [...activitys].sort((a, b) => {
     if (a.completed === b.completed) {
       const daysA = getRemainingDays(a.due_date);
       const daysB = getRemainingDays(b.due_date);
@@ -104,13 +102,13 @@ const loadAssignments = () => {
     return a.completed ? 1 : -1;
   });
 
-  sortedAssignments.forEach((assignment) => {
-    const remainingDays = getRemainingDays(assignment.due_date);
+  sortedAssignments.forEach((activity) => {
+    const remainingDays = getRemainingDays(activity.due_date);
     const statusColor = getStatusColor(remainingDays);
 
-    const assignmentItem = document.createElement("div");
-    assignmentItem.classList.add(
-      "assignment-item",
+    const activityItem = document.createElement("div");
+    activityItem.classList.add(
+      "activity-item",
       "bg-white",
       "p-4",
       "rounded-lg",
@@ -119,21 +117,21 @@ const loadAssignments = () => {
       "items-center",
       "justify-between"
     );
-    assignmentItem.dataset.id = assignment.id;
+    activityItem.dataset.id = activity.id;
 
     const contentDiv = document.createElement("div");
     contentDiv.classList.add("flex-grow");
 
     const title = document.createElement("h3");
     title.classList.add("text-lg", "font-semibold", "text-gray-800");
-    title.textContent = assignment.name;
+    title.textContent = activity.name;
 
     const dueDateContainer = document.createElement("div");
     dueDateContainer.classList.add("flex", "gap-4", "items-center", "mt-1");
 
     const dueDate = document.createElement("p");
     dueDate.classList.add("text-sm", "text-gray-600");
-    dueDate.textContent = `Due Date: ${assignment.due_date}`;
+    dueDate.textContent = `Due Date: ${activity.due_date}`;
 
     const remainingDaysElement = document.createElement("p");
     remainingDaysElement.classList.add("text-sm", "font-medium", statusColor);
@@ -147,7 +145,7 @@ const loadAssignments = () => {
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.checked = assignment.completed;
+    checkbox.checked = activity.completed;
     checkbox.classList.add(
       "h-5",
       "w-5",
@@ -155,7 +153,7 @@ const loadAssignments = () => {
       "rounded",
       "cursor-pointer"
     );
-    checkbox.dataset.id = assignment.id;
+    checkbox.dataset.id = activity.id;
     checkbox.addEventListener("change", (e) => {
       const id = e.target.dataset.id;
       toggleCompletion(id);
@@ -163,17 +161,17 @@ const loadAssignments = () => {
 
     contentDiv.appendChild(title);
     contentDiv.appendChild(dueDateContainer);
-    assignmentItem.appendChild(contentDiv);
-    assignmentItem.appendChild(checkbox);
+    activityItem.appendChild(contentDiv);
+    activityItem.appendChild(checkbox);
 
-    if (assignment.completed) {
-      assignmentItem.classList.add("bg-green-50");
+    if (activity.completed) {
+      activityItem.classList.add("bg-green-50");
       title.classList.add("line-through", "text-gray-500");
       dueDate.classList.add("text-gray-400");
       remainingDaysElement.classList.add("text-gray-400");
     }
 
-    assignmentList.appendChild(assignmentItem);
+    activityList.appendChild(activityItem);
   });
 };
 

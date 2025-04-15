@@ -1,9 +1,16 @@
 // Load activitys from localStorage or use default if none exist
 let activitys = JSON.parse(localStorage.getItem("activities")) || [
   {
+    id: Date.now(),
+    name: "Stats Exam (Baisakh 11, 2082)",
+    due_date: "2025-04-24",
+    activityType: "EXAM",
+    completed: false,
+  },
+  {
     id: "1",
     name: "AI 3rd Assignment (Matplotlib)",
-    due_date: "2025-04-15",
+    due_date: "2025-04-16",
     activityType: "ASSIGNMENT",
     completed: false,
   },

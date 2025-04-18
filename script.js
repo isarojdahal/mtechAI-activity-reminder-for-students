@@ -2,9 +2,9 @@
 let activitys = JSON.parse(localStorage.getItem("activities")) || [
   {
     id: Date.now(),
-    name: "Stats Exam (Baisakh 11, 2082)",
-    due_date: "2025-04-24",
-    activityType: "EXAM",
+    name: "Presentation of AI Project Progress (of Korean prof)",
+    due_date: "2025-04-25",
+    activityType: "ASSIGNMENT",
     completed: false,
   },
   {

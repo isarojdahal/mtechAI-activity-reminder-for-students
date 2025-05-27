@@ -1,27 +1,19 @@
-// Load activitys from localStorage or use default if none exist
-let activitys = JSON.parse(localStorage.getItem("activities")) || [
-  {
-    id: Date.now(),
-    name: "Stats Exam (Baisakh 11, 2082)",
-    due_date: "2025-04-24",
-    activityType: "EXAM",
-    completed: false,
-  },
-  {
-    id: "1",
-    name: "AI 3rd Assignment (Matplotlib)",
-    due_date: "2025-04-16",
-    activityType: "ASSIGNMENT",
-    completed: false,
-  },
-  {
-    id: "2",
-    name: "Korean prof. Project ",
-    due_date: "2025-06-15",
-    activityType: "ASSIGNMENT",
-    completed: false,
-  },
-];
+// Load activities from JSON file or localStorage
+let activitys = [];
+
+// Function to load activities from JSON file
+const loadActivitiesFromJSON = async () => {
+  try {
+    const response = await fetch("activities.json");
+    const data = await response.json();
+    activitys = data.activities;
+    saveActivities(); // Save to localStorage for persistence
+  } catch (error) {
+    console.error("Error loading activities:", error);
+    // Fallback to localStorage if JSON loading fails
+    activitys = JSON.parse(localStorage.getItem("activities")) || [];
+  }
+};
 
 // Calculate remaining days
 const getRemainingDays = (dueDate) => {
@@ -292,7 +284,10 @@ const loadAssignments = () => {
 };
 
 // Initialize the app
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  // Load activities from JSON file
+  await loadActivitiesFromJSON();
+
   // Set up filter buttons
   document
     .getElementById("filter-all")
@@ -331,29 +326,14 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Clear all data functionality
-document.getElementById("clear-data").addEventListener("click", () => {
+document.getElementById("clear-data").addEventListener("click", async () => {
   if (
     confirm(
       "Are you sure you want to clear all data? This action cannot be undone."
     )
   ) {
     localStorage.removeItem("activities");
-    activitys = [
-      {
-        id: "1",
-        name: "AI 3rd Assignment (Matplotlib)",
-        due_date: "2025-04-15",
-        activityType: "ASSIGNMENT",
-        completed: false,
-      },
-      {
-        id: "2",
-        name: "Korean prof. Project ",
-        due_date: "2025-06-15",
-        activityType: "ASSIGNMENT",
-        completed: false,
-      },
-    ];
+    await loadActivitiesFromJSON(); // Reload from JSON file
     loadAssignments();
     updateStats();
   }

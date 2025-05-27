@@ -1,0 +1,44 @@
+{
+  "activities": [
+    {
+      "id": "1",
+      "name": "Stats Exam (Baisakh 11, 2082)",
+      "subject": "Computational Statistics and Probability",
+      "due_date": "2025-04-24",
+      "activityType": "EXAM",
+      "completed": false
+    },
+    {
+      "id": "2",
+      "name": "AI 3rd Assignment (Matplotlib)",
+      "subject": "Artificial Intelligence",
+      "due_date": "2025-04-16",
+      "activityType": "ASSIGNMENT",
+      "completed": false
+    },
+    {
+      "id": "3",
+      "name": "Korean prof. Project",
+      "subject": "Korean Professor (AI)",
+      "due_date": "2025-06-15",
+      "activityType": "ASSIGNMENT",
+      "completed": false
+    },
+    {
+      "id": "4",
+      "name": "Data Analytics Project",
+      "subject": "Data Analytics",
+      "due_date": "2025-06-10",
+      "activityType": "PROJECT",
+      "completed": false
+    },
+    {
+      "id": "5",
+      "name": "Project Report",
+      "subject": "Korean Professor",
+      "due_date": "2025-05-30",
+      "activityType": "PROJECT",
+      "completed": false
+    }
+  ]
+}

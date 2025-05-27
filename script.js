@@ -4,6 +4,15 @@ let activitys = [];
 // Function to load activities from JSON file
 const loadActivitiesFromJSON = async () => {
   try {
+    // First check localStorage
+    const storedActivities = localStorage.getItem("activities");
+    if (storedActivities) {
+      activitys = JSON.parse(storedActivities);
+      console.log("Loaded activities from localStorage:", activitys);
+      return; // Exit if we have localStorage data
+    }
+
+    // If no localStorage data, load from JSON
     const response = await fetch("activities.json");
     if (!response.ok) {
       throw new Error("Failed to load activities");
@@ -11,17 +20,13 @@ const loadActivitiesFromJSON = async () => {
     const data = await response.json();
     activitys = data.activities;
     saveActivities(); // Save to localStorage for persistence
-    console.log("Activities loaded successfully:", activitys);
+    console.log("Activities loaded from JSON:", activitys);
   } catch (error) {
     console.error("Error loading activities:", error);
-    // Fallback to localStorage if JSON loading fails
-    const storedActivities = localStorage.getItem("activities");
-    if (storedActivities) {
-      activitys = JSON.parse(storedActivities);
-      console.log("Loaded activities from localStorage:", activitys);
-    } else {
+    // If both localStorage and JSON loading fail, initialize empty array
+    if (!activitys || activitys.length === 0) {
       activitys = [];
-      console.log("No activities found in localStorage");
+      console.log("No activities found, initializing empty array");
     }
   }
 };
@@ -85,7 +90,7 @@ const getActivityTypeColor = (type) => {
 const saveActivities = () => {
   try {
     localStorage.setItem("activities", JSON.stringify(activitys));
-    console.log("Activities saved to localStorage");
+    console.log("Activities saved to localStorage:", activitys);
     updateStats();
   } catch (error) {
     console.error("Error saving activities:", error);
@@ -110,11 +115,24 @@ const updateStats = () => {
 
 // Toggle completion status
 const toggleCompletion = (id) => {
-  const activity = activitys.find((a) => a.id === id);
-  if (activity) {
-    activity.completed = !activity.completed;
-    saveActivities();
-    loadAssignments();
+  try {
+    const activity = activitys.find((a) => a.id === id);
+    if (activity) {
+      activity.completed = !activity.completed;
+      console.log("Toggled activity completion:", activity);
+
+      // Save to localStorage immediately after toggling
+      localStorage.setItem("activities", JSON.stringify(activitys));
+      console.log("Updated localStorage with new activity state");
+
+      // Update UI
+      loadAssignments();
+      updateStats();
+    } else {
+      console.error("Activity not found with id:", id);
+    }
+  } catch (error) {
+    console.error("Error toggling completion:", error);
   }
 };
 
@@ -152,6 +170,58 @@ const setTypeFilter = (type) => {
   loadAssignments();
 };
 
+// Import Nepali date conversion
+import { convertToNepaliDate } from "./nepaliDate.js";
+
+// Settings management
+let settings = {
+  dateFormat: localStorage.getItem("dateFormat") || "english",
+};
+
+// Format date based on settings
+const formatDate = (date) => {
+  if (settings.dateFormat === "nepali") {
+    return convertToNepaliDate(date);
+  }
+  return date;
+};
+
+// Initialize settings
+const initializeSettings = () => {
+  // Set initial radio button state
+  const radioButtons = document.querySelectorAll('input[name="date-format"]');
+  radioButtons.forEach((radio) => {
+    if (radio.value === settings.dateFormat) {
+      radio.checked = true;
+    }
+  });
+
+  // Settings dialog functionality
+  const settingsDialog = document.getElementById("settings-dialog");
+  const settingsButton = document.getElementById("settings-button");
+  const closeSettings = document.getElementById("close-settings");
+
+  settingsButton.addEventListener("click", () => {
+    settingsDialog.classList.remove("hidden");
+    settingsDialog.classList.add("flex");
+  });
+
+  closeSettings.addEventListener("click", () => {
+    settingsDialog.classList.add("hidden");
+    settingsDialog.classList.remove("flex");
+  });
+
+  // Handle date format changes
+  radioButtons.forEach((radio) => {
+    radio.addEventListener("change", (e) => {
+      settings.dateFormat = e.target.value;
+      localStorage.setItem("dateFormat", settings.dateFormat);
+      loadAssignments(); // Reload assignments with new date format
+    });
+  });
+};
+
+// Modify the loadAssignments function to use the new date formatting
 const loadAssignments = () => {
   const activityList = document.getElementById("activity-list");
   activityList.innerHTML = "";
@@ -272,7 +342,9 @@ const loadAssignments = () => {
 
     const dueDate = document.createElement("p");
     dueDate.classList.add("text-sm", "text-gray-600");
-    dueDate.innerHTML = `<i class="far fa-calendar"></i> ${activity.due_date}`;
+    dueDate.innerHTML = `<i class="far fa-calendar"></i> ${formatDate(
+      activity.due_date
+    )}`;
 
     const remainingDaysElement = document.createElement("p");
     remainingDaysElement.classList.add("text-sm", "font-medium", statusColor);
@@ -350,6 +422,9 @@ const checkUpcomingActivities = () => {
 
 // Initialize the app
 document.addEventListener("DOMContentLoaded", async () => {
+  // Initialize settings
+  initializeSettings();
+
   // Load activities from JSON file
   await loadActivitiesFromJSON();
 

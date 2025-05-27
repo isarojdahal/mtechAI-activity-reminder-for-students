@@ -18,6 +18,13 @@
           <h1 class="text-2xl font-semibold text-gray-800">Activity Tracker</h1>
           <div class="flex gap-2">
             <button
+              id="settings-button"
+              class="px-3 py-1.5 bg-gray-50 text-gray-600 rounded hover:bg-gray-100 transition-colors flex items-center gap-1.5 text-sm"
+            >
+              <i class="fas fa-cog"></i>
+              Settings
+            </button>
+            <button
               id="notification-settings"
               class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors flex items-center gap-1.5 text-sm"
             >
@@ -34,6 +41,54 @@
           </div>
         </div>
       </header>
+
+      <!-- Settings Dialog -->
+      <div
+        id="settings-dialog"
+        class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center"
+      >
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-800">Settings</h2>
+            <button
+              id="close-settings"
+              class="text-gray-500 hover:text-gray-700"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <h3 class="text-sm font-medium text-gray-700 mb-2">
+                Date Format
+              </h3>
+              <div class="flex gap-3">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="date-format"
+                    value="english"
+                    class="text-blue-600"
+                  />
+                  <span class="text-sm text-gray-700"
+                    >English (YYYY-MM-DD)</span
+                  >
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="date-format"
+                    value="nepali"
+                    class="text-blue-600"
+                  />
+                  <span class="text-sm text-gray-700">Nepali (YYYY-MM-DD)</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Stats Section -->
       <div class="grid grid-cols-3 gap-3 mb-4">
@@ -125,6 +180,6 @@
         <div id="activity-list" class="space-y-2"></div>
       </div>
     </div>
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
   </body>
 </html>

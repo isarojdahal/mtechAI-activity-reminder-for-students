@@ -173,8 +173,8 @@ const loadAssignments = () => {
     activityItem.classList.add(
       "activity-item",
       "bg-white",
-      "p-4",
-      "rounded-lg",
+      "p-3",
+      "rounded",
       "border",
       "border-gray-100",
       "hover:border-gray-200",
@@ -186,14 +186,14 @@ const loadAssignments = () => {
     activityItem.dataset.id = activity.id;
 
     const contentDiv = document.createElement("div");
-    contentDiv.classList.add("flex-grow", "flex", "items-center", "gap-4");
+    contentDiv.classList.add("flex-grow", "flex", "items-center", "gap-3");
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = activity.completed;
     checkbox.classList.add(
-      "h-5",
-      "w-5",
+      "h-4",
+      "w-4",
       "text-blue-600",
       "rounded",
       "cursor-pointer",
@@ -209,7 +209,7 @@ const loadAssignments = () => {
     infoDiv.classList.add("flex-grow");
 
     const titleRow = document.createElement("div");
-    titleRow.classList.add("flex", "items-center", "gap-2");
+    titleRow.classList.add("flex", "items-center", "gap-2", "flex-wrap");
 
     const activityTypeBadge = document.createElement("span");
     activityTypeBadge.classList.add(
@@ -217,8 +217,8 @@ const loadAssignments = () => {
       "items-center",
       "gap-1",
       "px-2",
-      "py-1",
-      "rounded-full",
+      "py-0.5",
+      "rounded",
       "text-xs",
       "font-medium",
       "bg-gray-100",
@@ -227,45 +227,45 @@ const loadAssignments = () => {
     activityTypeBadge.innerHTML = `<i class="fas ${activityTypeIcon}"></i> ${activity.activityType}`;
 
     const title = document.createElement("h3");
-    title.classList.add("text-lg", "font-semibold", "text-gray-800");
+    title.classList.add("text-base", "font-medium", "text-gray-800");
     title.textContent = activity.name;
 
     titleRow.appendChild(activityTypeBadge);
     titleRow.appendChild(title);
 
-    const dueDateContainer = document.createElement("div");
-    dueDateContainer.classList.add("flex", "gap-4", "items-center", "mt-1");
+    const detailsRow = document.createElement("div");
+    detailsRow.classList.add(
+      "flex",
+      "flex-wrap",
+      "gap-3",
+      "items-center",
+      "mt-1"
+    );
+
+    if (activity.subject) {
+      const subject = document.createElement("p");
+      subject.classList.add("text-sm", "text-gray-600");
+      subject.innerHTML = `<i class="fas fa-bookmark"></i> ${activity.subject}`;
+      detailsRow.appendChild(subject);
+    }
 
     const dueDate = document.createElement("p");
-    dueDate.classList.add(
-      "text-sm",
-      "text-gray-600",
-      "flex",
-      "items-center",
-      "gap-2"
-    );
-    dueDate.innerHTML = `<i class="far fa-calendar"></i> Due: ${activity.due_date}`;
+    dueDate.classList.add("text-sm", "text-gray-600");
+    dueDate.innerHTML = `<i class="far fa-calendar"></i> ${activity.due_date}`;
 
     const remainingDaysElement = document.createElement("p");
-    remainingDaysElement.classList.add(
-      "text-sm",
-      "font-medium",
-      statusColor,
-      "flex",
-      "items-center",
-      "gap-2"
-    );
+    remainingDaysElement.classList.add("text-sm", "font-medium", statusColor);
     remainingDaysElement.innerHTML = `<i class="fas ${statusIcon}"></i> ${
       remainingDays < 0
         ? `Overdue by ${Math.abs(remainingDays)} days`
         : `Due in ${remainingDays} days`
     }`;
 
-    dueDateContainer.appendChild(dueDate);
-    dueDateContainer.appendChild(remainingDaysElement);
+    detailsRow.appendChild(dueDate);
+    detailsRow.appendChild(remainingDaysElement);
 
     infoDiv.appendChild(titleRow);
-    infoDiv.appendChild(dueDateContainer);
+    infoDiv.appendChild(detailsRow);
 
     contentDiv.appendChild(checkbox);
     contentDiv.appendChild(infoDiv);

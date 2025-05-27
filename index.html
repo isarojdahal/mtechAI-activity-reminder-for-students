@@ -11,140 +11,109 @@
     />
   </head>
   <body class="bg-gray-50 min-h-screen">
-    <div class="max-w-4xl mx-auto p-6">
+    <div class="max-w-3xl mx-auto p-4">
       <!-- Header Section -->
-      <header class="bg-white rounded-lg shadow-sm p-6 mb-6">
+      <header class="bg-white rounded-lg p-4 mb-4">
         <div class="flex justify-between items-center">
-          <div>
-            <h1 class="text-3xl font-bold text-gray-800">Activity Tracker</h1>
-            <p class="text-gray-600 mt-1">
-              Keep track of your assignments and deadlines
-            </p>
-          </div>
-          <div class="flex gap-3">
-            <button
-              id="clear-data"
-              class="px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors flex items-center gap-2"
-            >
-              <i class="fas fa-trash-alt"></i>
-              Clear Data
-            </button>
-          </div>
+          <h1 class="text-2xl font-semibold text-gray-800">Activity Tracker</h1>
+          <button
+            id="clear-data"
+            class="px-3 py-1.5 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors flex items-center gap-1.5 text-sm"
+          >
+            <i class="fas fa-trash-alt"></i>
+            Clear
+          </button>
         </div>
       </header>
 
       <!-- Stats Section -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div class="bg-white p-4 rounded-lg shadow-sm">
-          <div class="flex items-center gap-3">
-            <div class="bg-blue-100 p-3 rounded-full">
-              <i class="fas fa-tasks text-blue-600"></i>
-            </div>
-            <div>
-              <p class="text-sm text-gray-600">Total Activities</p>
-              <h3
-                id="total-activities"
-                class="text-xl font-semibold text-gray-800"
-              >
-                0
-              </h3>
-            </div>
-          </div>
+      <div class="grid grid-cols-3 gap-3 mb-4">
+        <div class="bg-white p-3 rounded-lg">
+          <p class="text-sm text-gray-600">Total</p>
+          <h3 id="total-activities" class="text-lg font-medium text-gray-800">
+            0
+          </h3>
         </div>
-        <div class="bg-white p-4 rounded-lg shadow-sm">
-          <div class="flex items-center gap-3">
-            <div class="bg-green-100 p-3 rounded-full">
-              <i class="fas fa-check text-green-600"></i>
-            </div>
-            <div>
-              <p class="text-sm text-gray-600">Completed</p>
-              <h3
-                id="completed-activities"
-                class="text-xl font-semibold text-gray-800"
-              >
-                0
-              </h3>
-            </div>
-          </div>
+        <div class="bg-white p-3 rounded-lg">
+          <p class="text-sm text-gray-600">Completed</p>
+          <h3
+            id="completed-activities"
+            class="text-lg font-medium text-gray-800"
+          >
+            0
+          </h3>
         </div>
-        <div class="bg-white p-4 rounded-lg shadow-sm">
-          <div class="flex items-center gap-3">
-            <div class="bg-orange-100 p-3 rounded-full">
-              <i class="fas fa-clock text-orange-600"></i>
-            </div>
-            <div>
-              <p class="text-sm text-gray-600">Upcoming</p>
-              <h3
-                id="upcoming-activities"
-                class="text-xl font-semibold text-gray-800"
-              >
-                0
-              </h3>
-            </div>
-          </div>
+        <div class="bg-white p-3 rounded-lg">
+          <p class="text-sm text-gray-600">Upcoming</p>
+          <h3
+            id="upcoming-activities"
+            class="text-lg font-medium text-gray-800"
+          >
+            0
+          </h3>
         </div>
       </div>
 
       <!-- Activity List -->
-      <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex flex-col gap-4 mb-4">
+      <div class="bg-white rounded-lg p-4">
+        <div class="flex flex-col gap-3 mb-4">
           <div class="flex justify-between items-center">
-            <h2 class="text-xl font-semibold text-gray-800">Your Activities</h2>
-            <div class="flex gap-2">
+            <h2 class="text-lg font-medium text-gray-800">Activities</h2>
+            <div class="flex gap-1.5">
               <button
                 id="filter-all"
-                class="px-3 py-1 rounded-full bg-blue-100 text-blue-600 text-sm"
+                class="px-2.5 py-1 rounded bg-blue-100 text-blue-600 text-sm"
               >
                 All
               </button>
               <button
                 id="filter-active"
-                class="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-sm"
+                class="px-2.5 py-1 rounded bg-gray-100 text-gray-600 text-sm"
               >
                 Active
               </button>
               <button
                 id="filter-completed"
-                class="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-sm"
+                class="px-2.5 py-1 rounded bg-gray-100 text-gray-600 text-sm"
               >
-                Completed
+                Done
               </button>
             </div>
           </div>
-          <div class="flex gap-2">
+          <div class="flex gap-1.5 overflow-x-auto pb-1">
             <button
               id="type-all"
-              class="px-3 py-1 rounded-full bg-blue-100 text-blue-600 text-sm flex items-center gap-1"
+              class="px-2.5 py-1 rounded bg-blue-100 text-blue-600 text-sm flex items-center gap-1 whitespace-nowrap"
             >
-              <i class="fas fa-tasks"></i> All Types
+              <i class="fas fa-tasks"></i> All
             </button>
             <button
               id="type-assignment"
-              class="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-sm flex items-center gap-1"
+              class="px-2.5 py-1 rounded bg-gray-100 text-gray-600 text-sm flex items-center gap-1 whitespace-nowrap"
             >
               <i class="fas fa-book"></i> Assignments
             </button>
             <button
               id="type-project"
-              class="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-sm flex items-center gap-1"
+              class="px-2.5 py-1 rounded bg-gray-100 text-gray-600 text-sm flex items-center gap-1 whitespace-nowrap"
             >
               <i class="fas fa-project-diagram"></i> Projects
             </button>
             <button
               id="type-exam"
-              class="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-sm flex items-center gap-1"
+              class="px-2.5 py-1 rounded bg-gray-100 text-gray-600 text-sm flex items-center gap-1 whitespace-nowrap"
             >
               <i class="fas fa-file-alt"></i> Exams
             </button>
             <button
               id="type-quiz"
-              class="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-sm flex items-center gap-1"
+              class="px-2.5 py-1 rounded bg-gray-100 text-gray-600 text-sm flex items-center gap-1 whitespace-nowrap"
             >
               <i class="fas fa-question-circle"></i> Quizzes
             </button>
           </div>
         </div>
-        <div id="activity-list" class="space-y-3"></div>
+        <div id="activity-list" class="space-y-2"></div>
       </div>
     </div>
     <script src="script.js"></script>

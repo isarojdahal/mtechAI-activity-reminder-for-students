@@ -5,13 +5,24 @@ let activitys = [];
 const loadActivitiesFromJSON = async () => {
   try {
     const response = await fetch("activities.json");
+    if (!response.ok) {
+      throw new Error("Failed to load activities");
+    }
     const data = await response.json();
     activitys = data.activities;
     saveActivities(); // Save to localStorage for persistence
+    console.log("Activities loaded successfully:", activitys);
   } catch (error) {
     console.error("Error loading activities:", error);
     // Fallback to localStorage if JSON loading fails
-    activitys = JSON.parse(localStorage.getItem("activities")) || [];
+    const storedActivities = localStorage.getItem("activities");
+    if (storedActivities) {
+      activitys = JSON.parse(storedActivities);
+      console.log("Loaded activities from localStorage:", activitys);
+    } else {
+      activitys = [];
+      console.log("No activities found in localStorage");
+    }
   }
 };
 
@@ -72,19 +83,29 @@ const getActivityTypeColor = (type) => {
 
 // Save activitys to localStorage
 const saveActivities = () => {
-  localStorage.setItem("activities", JSON.stringify(activitys));
-  updateStats();
+  try {
+    localStorage.setItem("activities", JSON.stringify(activitys));
+    console.log("Activities saved to localStorage");
+    updateStats();
+  } catch (error) {
+    console.error("Error saving activities:", error);
+  }
 };
 
 // Update statistics
 const updateStats = () => {
-  const total = activitys.length;
-  const completed = activitys.filter((a) => a.completed).length;
-  const upcoming = total - completed;
+  try {
+    const total = activitys.length;
+    const completed = activitys.filter((a) => a.completed).length;
+    const upcoming = total - completed;
 
-  document.getElementById("total-activities").textContent = total;
-  document.getElementById("completed-activities").textContent = completed;
-  document.getElementById("upcoming-activities").textContent = upcoming;
+    document.getElementById("total-activities").textContent = total;
+    document.getElementById("completed-activities").textContent = completed;
+    document.getElementById("upcoming-activities").textContent = upcoming;
+    console.log("Stats updated:", { total, completed, upcoming });
+  } catch (error) {
+    console.error("Error updating stats:", error);
+  }
 };
 
 // Toggle completion status
@@ -283,10 +304,89 @@ const loadAssignments = () => {
   });
 };
 
+// Notification system
+let notificationPermission = false;
+
+// Request notification permission
+const requestNotificationPermission = async () => {
+  try {
+    const permission = await Notification.requestPermission();
+    notificationPermission = permission === "granted";
+    if (notificationPermission) {
+      console.log("Notification permission granted");
+    }
+  } catch (error) {
+    console.error("Error requesting notification permission:", error);
+  }
+};
+
+// Check for upcoming activities and send notifications
+const checkUpcomingActivities = () => {
+  if (!notificationPermission) return;
+
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  activitys.forEach((activity) => {
+    if (activity.completed) return;
+
+    const dueDate = new Date(activity.due_date);
+    const timeDiff = dueDate - now;
+    const daysUntilDue = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+    // Notify for activities due in the next 24 hours
+    if (timeDiff > 0 && timeDiff <= 24 * 60 * 60 * 1000) {
+      new Notification("Activity Due Soon!", {
+        body: `${activity.name} is due in ${daysUntilDue} day${
+          daysUntilDue === 1 ? "" : "s"
+        }`,
+        icon: "/favicon.ico", // You can add your own icon
+        tag: `activity-${activity.id}`, // Prevent duplicate notifications
+      });
+    }
+  });
+};
+
 // Initialize the app
 document.addEventListener("DOMContentLoaded", async () => {
   // Load activities from JSON file
   await loadActivitiesFromJSON();
+
+  // Request notification permission
+  await requestNotificationPermission();
+
+  // Check for upcoming activities every hour
+  setInterval(checkUpcomingActivities, 60 * 60 * 1000);
+
+  // Initial check
+  checkUpcomingActivities();
+
+  // Set up notification settings button
+  document
+    .getElementById("notification-settings")
+    .addEventListener("click", async () => {
+      if (Notification.permission === "denied") {
+        alert(
+          "Please enable notifications in your browser settings to receive activity reminders."
+        );
+        return;
+      }
+
+      if (Notification.permission === "default") {
+        const permission = await Notification.requestPermission();
+        notificationPermission = permission === "granted";
+        if (notificationPermission) {
+          alert(
+            "Notifications enabled! You will receive reminders for upcoming activities."
+          );
+        }
+      } else {
+        alert(
+          "Notifications are already enabled. You will receive reminders for upcoming activities."
+        );
+      }
+    });
 
   // Set up filter buttons
   document
